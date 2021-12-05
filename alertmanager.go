@@ -31,7 +31,7 @@ func HandleAlertmanagerPayloadPost(c *fiber.Ctx) error {
 			message = fmt.Sprintf("☑️ %s", alert.Annotations["description"])
 		}
 
-		_, err := matrixClient.SendText(id.RoomID(*defaultRoom), message)
+		_, err := matrixClient.SendText(id.RoomID(getRoom(*defaultRoom)), message)
 		if err != nil {
 			fmt.Println("Failed sending to Matrix", err)
 			if httpErr, ok := err.(mautrix.HTTPError); ok {

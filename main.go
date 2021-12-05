@@ -58,6 +58,50 @@ func main() {
 	app.Listen(fmt.Sprintf(":%s", port))
 }
 
+func getRoom(roomID string) string {
+	room := parseRoom(roomID)
+	if strings.HasPrefix(room, "#") || !strings.HasPrefix("!", room) {
+		if !strings.HasPrefix(room, "#") {
+			room = fmt.Sprintf("#%s", room)
+		}
+
+		resp, err := matrixClient.ResolveAlias(id.RoomAlias(room))
+		if err == nil {
+			room = resp.RoomID.String()
+		} else {
+			room = strings.Replace(room, "#", "!", 1)
+		}
+	}
+
+	return room
+}
+
+func parseRoom(room string) string {
+	prefix := ""
+	local := ""
+	domain := ""
+
+	parts := strings.Split(room, ":")
+	if len(parts) == 2 {
+		domain = parts[1]
+	} else {
+		domain = matrixClient.HomeserverURL.Host
+	}
+
+	if strings.HasPrefix(parts[0], "!") {
+		prefix = "!"
+		parts[0] = strings.TrimPrefix(parts[0], "!")
+	}
+	if strings.HasPrefix(parts[0], "#") {
+		prefix = "#"
+		parts[0] = strings.TrimPrefix(parts[0], "#")
+	}
+
+	local = parts[0]
+
+	return fmt.Sprintf("%s%s:%s", prefix, local, domain)
+}
+
 func HandlePayloadPost(c *fiber.Ctx) error {
 	payload := Payload{}
 
