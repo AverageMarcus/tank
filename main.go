@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/id"
 )
@@ -51,6 +52,7 @@ func init() {
 
 func main() {
 	app := fiber.New()
+	app.Use(logger.New())
 	app.Post("/", HandlePayloadPost)
 	app.Post("/alertmanager", HandleAlertmanagerPayloadPost)
 	app.Listen(fmt.Sprintf(":%s", port))
