@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	tTemplate "text/template"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/prometheus/alertmanager/template"
@@ -20,15 +22,20 @@ func HandleAlertmanagerPayloadPost(c *fiber.Ctx) error {
 
 	for _, alert := range payload.Alerts {
 		message := ""
+
+		var rendered bytes.Buffer
+		at, _ := tTemplate.New("AlertMessage").Parse(alert.Annotations["description"])
+		at.Execute(&rendered, alert)
+
 		if alert.Status == "firing" {
 			switch alert.Labels["severity"] {
 			case "warning":
-				message = fmt.Sprintf("⚠️ %s", alert.Annotations["description"])
+				message = fmt.Sprintf("⚠️ %s", rendered.String())
 			case "notify":
-				message = fmt.Sprintf("@room - %s", alert.Annotations["description"])
+				message = fmt.Sprintf("@room - %s", rendered.String())
 			}
 		} else {
-			message = fmt.Sprintf("☑️ %s", alert.Annotations["description"])
+			message = fmt.Sprintf("☑️ %s", rendered.String())
 		}
 
 		_, err := matrixClient.SendText(id.RoomID(getRoom(*defaultRoom)), message)
