@@ -18,6 +18,9 @@ curl -X "POST" "http://localhost:3000/" \
 
 * Send text messages to a room
 * Send notice messages to a room
+* Integrations:
+  * Alertmanager - Use the `/alertmanager` endpoint
+
 
 ## Building from source
 

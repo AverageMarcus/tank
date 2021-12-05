@@ -52,6 +52,7 @@ func init() {
 func main() {
 	app := fiber.New()
 	app.Post("/", HandlePayloadPost)
+	app.Post("/alertmanager", HandleAlertmanagerPayloadPost)
 	app.Listen(fmt.Sprintf(":%s", port))
 }
 
