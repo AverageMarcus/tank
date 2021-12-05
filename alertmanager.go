@@ -8,6 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/prometheus/alertmanager/template"
 	"maunium.net/go/mautrix"
+	"maunium.net/go/mautrix/event"
+	"maunium.net/go/mautrix/format"
 	"maunium.net/go/mautrix/id"
 )
 
@@ -32,13 +34,17 @@ func HandleAlertmanagerPayloadPost(c *fiber.Ctx) error {
 			case "warning":
 				message = fmt.Sprintf("⚠️ %s", rendered.String())
 			case "notify":
-				message = fmt.Sprintf("@room - %s", rendered.String())
+				message = fmt.Sprintf("🔥 @room - %s", rendered.String())
 			}
 		} else {
-			message = fmt.Sprintf("☑️ %s", rendered.String())
+			message = fmt.Sprintf("✅ %s", rendered.String())
 		}
 
-		_, err := matrixClient.SendText(id.RoomID(getRoom(*defaultRoom)), message)
+		_, err := matrixClient.SendMessageEvent(
+			id.RoomID(getRoom(*defaultRoom)),
+			event.EventMessage,
+			format.RenderMarkdown(message, true, true),
+		)
 		if err != nil {
 			fmt.Println("Failed sending to Matrix", err)
 			if httpErr, ok := err.(mautrix.HTTPError); ok {
