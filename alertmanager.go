@@ -12,8 +12,11 @@ import (
 func HandleAlertmanagerPayloadPost(c *fiber.Ctx) error {
 	payload := template.Data{}
 	if err := c.BodyParser(&payload); err != nil {
+		fmt.Println("Failed to parse payload", err)
 		return err
 	}
+
+	fmt.Println("Got alertmanager payload")
 
 	for _, alert := range payload.Alerts {
 		message := ""
@@ -30,6 +33,7 @@ func HandleAlertmanagerPayloadPost(c *fiber.Ctx) error {
 
 		_, err := matrixClient.SendText(id.RoomID(*defaultRoom), message)
 		if err != nil {
+			fmt.Println("Failed sending to Matrix", err)
 			if httpErr, ok := err.(mautrix.HTTPError); ok {
 				return c.Status(httpErr.Response.StatusCode).SendString(httpErr.RespError.Err)
 			}
