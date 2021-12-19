@@ -41,7 +41,7 @@ func HandleAlertmanagerPayloadPost(c *fiber.Ctx) error {
 		}
 
 		_, err := matrixClient.SendMessageEvent(
-			id.RoomID(getRoom(*defaultRoom)),
+			id.RoomID(getRoom(c.Query("room", *defaultRoom))),
 			event.EventMessage,
 			format.RenderMarkdown(message, true, true),
 		)
