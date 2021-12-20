@@ -47,7 +47,7 @@ ci:
 
 .PHONY: release # Release the latest version of the application
 release:
-	@kubectl --namespace opengraph set image deployment opengraph web=docker.cluster.fun/averagemarcus/tank:$(SHA)
+	@kubectl --namespace tank set image deployment tank web=docker.cluster.fun/averagemarcus/tank:$(SHA)
 
 .PHONY: help # Show this list of commands
 help:
