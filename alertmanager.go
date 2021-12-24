@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	tTemplate "text/template"
 
@@ -21,8 +22,12 @@ func HandleAlertmanagerPayloadPost(c *fiber.Ctx) error {
 	}
 
 	fmt.Println("Got alertmanager payload")
+	fmt.Printf("%d alerts recieved\n", len(payload.Alerts))
 
 	for _, alert := range payload.Alerts {
+		s, _ := json.MarshalIndent(alert, "", "\t")
+		fmt.Println(string(s))
+
 		message := ""
 
 		var rendered bytes.Buffer
@@ -34,10 +39,18 @@ func HandleAlertmanagerPayloadPost(c *fiber.Ctx) error {
 			case "warning":
 				message = fmt.Sprintf("⚠️ %s", rendered.String())
 			case "notify":
-				message = fmt.Sprintf("🔥 @room - %s", rendered.String())
+				message = fmt.Sprintf("@room - %s", rendered.String())
 			}
 		} else {
 			message = fmt.Sprintf("✅ %s", rendered.String())
+		}
+
+		if serviceURL, ok := alert.Annotations["service_url"]; ok {
+			message += "<br>Service URL: " + serviceURL
+		}
+
+		if alert.GeneratorURL != "" {
+			message += "<br>URL: " + alert.GeneratorURL
 		}
 
 		_, err := matrixClient.SendMessageEvent(
