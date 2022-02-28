@@ -29,8 +29,10 @@ New Message from: %s
 
 > %s`, payload.From, payload.Text)
 
+	fmt.Println(msg)
+
 	_, err := matrixClient.SendMessageEvent(
-		id.RoomID(getRoom("SMS")),
+		id.RoomID(getRoom("pCzzyaOZfCrorkdgOR")),
 		event.EventMessage,
 		format.RenderMarkdown(msg, true, true),
 	)
