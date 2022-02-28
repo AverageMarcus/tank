@@ -55,6 +55,7 @@ func main() {
 	app.Use(logger.New())
 	app.Post("/", HandlePayloadPost)
 	app.Post("/alertmanager", HandleAlertmanagerPayloadPost)
+	app.Post("/nexmo/sms", HandleNexmoSMSPost)
 	app.Listen(fmt.Sprintf(":%s", port))
 }
 
