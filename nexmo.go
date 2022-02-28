@@ -13,7 +13,7 @@ import (
 type NexmoSMS struct {
 	ID   string `json:"messageId"`
 	From string `json:"msisdn"`
-	Text string `json:"test"`
+	Text string `json:"text"`
 	Type string `json:"type"`
 }
 
@@ -32,7 +32,7 @@ New Message from: %s
 	fmt.Println(msg)
 
 	_, err := matrixClient.SendMessageEvent(
-		id.RoomID(getRoom("pCzzyaOZfCrorkdgOR")),
+		id.RoomID(getRoom(*defaultRoom)),
 		event.EventMessage,
 		format.RenderMarkdown(msg, true, true),
 	)
