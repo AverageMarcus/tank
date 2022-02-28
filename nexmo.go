@@ -5,8 +5,6 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"maunium.net/go/mautrix"
-	"maunium.net/go/mautrix/event"
-	"maunium.net/go/mautrix/format"
 	"maunium.net/go/mautrix/id"
 )
 
@@ -31,11 +29,7 @@ New Message from: %s
 
 	fmt.Println(msg)
 
-	_, err := matrixClient.SendMessageEvent(
-		id.RoomID(getRoom(*defaultRoom)),
-		event.EventMessage,
-		format.RenderMarkdown(msg, true, true),
-	)
+	_, err := matrixClient.SendText(id.RoomID(getRoom("!pCzzyaOZfCrorkdgOR:matrix.cluster.fun")), msg)
 	if err != nil {
 		fmt.Println("Failed sending to Matrix", err)
 		if httpErr, ok := err.(mautrix.HTTPError); ok {
