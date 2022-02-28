@@ -29,7 +29,7 @@ New Message from: %s
 
 	fmt.Println(msg)
 
-	_, err := matrixClient.SendText(id.RoomID(getRoom("!pCzzyaOZfCrorkdgOR:matrix.cluster.fun")), msg)
+	_, err := matrixClient.SendText(id.RoomID(getRoom("pCzzyaOZfCrorkdgOR:matrix.cluster.fun")), msg)
 	if err != nil {
 		fmt.Println("Failed sending to Matrix", err)
 		if httpErr, ok := err.(mautrix.HTTPError); ok {
