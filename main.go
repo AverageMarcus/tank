@@ -8,6 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"maunium.net/go/mautrix"
+	"maunium.net/go/mautrix/event"
+	"maunium.net/go/mautrix/format"
 	"maunium.net/go/mautrix/id"
 )
 
@@ -117,6 +119,18 @@ func HandlePayloadPost(c *fiber.Ctx) error {
 	switch payload.Type {
 	case PayloadTypeText:
 		_, err := matrixClient.SendText(id.RoomID(payload.RoomID), payload.Message)
+		if err != nil {
+			if httpErr, ok := err.(mautrix.HTTPError); ok {
+				return c.Status(httpErr.Response.StatusCode).SendString(httpErr.RespError.Err)
+			}
+			return fiber.ErrInternalServerError
+		}
+	case PayloadTypeMarkdown:
+		_, err := matrixClient.SendMessageEvent(
+			id.RoomID(payload.RoomID),
+			event.EventMessage,
+			format.RenderMarkdown(payload.Message, true, true),
+		)
 		if err != nil {
 			if httpErr, ok := err.(mautrix.HTTPError); ok {
 				return c.Status(httpErr.Response.StatusCode).SendString(httpErr.RespError.Err)

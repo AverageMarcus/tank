@@ -7,8 +7,9 @@ import (
 type PayloadType string
 
 const (
-	PayloadTypeText   PayloadType = "text"
-	PayloadTypeNotice PayloadType = "notice"
+	PayloadTypeText     PayloadType = "text"
+	PayloadTypeMarkdown PayloadType = "markdown"
+	PayloadTypeNotice   PayloadType = "notice"
 )
 
 type Payload struct {
